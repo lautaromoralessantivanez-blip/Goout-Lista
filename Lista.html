@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GOOUT Lista</title>
+
+    <link rel="stylesheet" href="Lista.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <header>
+
+        <div class="logo">
+
+            <h1>GOOUT <span>Lista</span></h1>
+
+            <p>Organización Inteligente de Invitados</p>
+
+        </div>
+
+        <div class="usuario">
+
+            <span id="usuarioActual">
+                Invitado
+            </span>
+
+        </div>
+
+    </header>
+
+    <main>
+
+        <!-- PANEL IZQUIERDO -->
+
+        <aside class="sidebar">
+
+            <div class="tituloPanel">
+
+                <h2>Escuelas</h2>
+
+                <button id="btnNuevaEscuela">
+                    +
+                </button>
+
+            </div>
+
+            <input
+                type="text"
+                id="buscarEscuela"
+                placeholder="Buscar escuela...">
+
+            <div id="listaEscuelas">
+
+                <!-- JS -->
+
+            </div>
+
+        </aside>
+
+        <!-- PANEL CENTRAL -->
+
+        <section class="contenido">
+
+            <div class="barraSuperior">
+
+                <div>
+
+                    <h2 id="nombreEscuela">
+
+                        Ninguna escuela seleccionada
+
+                    </h2>
+
+                    <p id="estadisticasEscuela">
+
+                        0 egresados · 0 invitados
+
+                    </p>
+
+                </div>
+
+                <button id="btnAgregarEgresado">
+
+                    + Agregar egresado
+
+                </button>
+
+            </div>
+
+            <div class="busqueda">
+
+                <input
+                    type="text"
+                    id="buscarEgresado"
+                    placeholder="Buscar egresado...">
+
+            </div>
+
+<div id="listaEgresados" class="listaEgresados">
+
+    <!-- Las tarjetas de egresados aparecerán aquí -->
+
+</div>
+
+        </section>
+
+        <!-- PANEL DERECHO -->
+
+        <aside class="panelDerecho">
+
+            <h2>
+
+                Distribución
+
+            </h2>
+
+            <div class="config">
+
+                <label>
+
+                    Personas por mesa
+
+                </label>
+
+                <input
+                    type="number"
+                    id="personasMesa"
+                    value="8"
+                    min="2">
+
+            </div>
+
+            <div class="checks">
+
+                <label>
+
+                    <input
+                        type="checkbox"
+                        id="mantenerGrupos"
+                        checked>
+
+                    Mantener grupos juntos
+
+                </label>
+
+                <label>
+
+                    <input
+                        type="checkbox"
+                        id="optimizar"
+                        checked>
+
+                    Optimizar distribución
+
+                </label>
+
+            </div>
+
+            <button id="btnGenerar">
+
+                Generar Mesas
+
+            </button>
+
+            <hr>
+
+            <div id="estadisticas">
+
+                <div class="card">
+
+                    <h3>Mesas</h3>
+
+                    <span id="totalMesas">
+
+                        0
+
+                    </span>
+
+                </div>
+
+                <div class="card">
+
+                    <h3>Invitados</h3>
+
+                    <span id="totalInvitados">
+
+                        0
+
+                    </span>
+
+                </div>
+
+                <div class="card">
+
+                    <h3>Lugares libres</h3>
+
+                    <span id="lugaresLibres">
+
+                        0
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+    <!-- RESULTADO -->
+
+    <section class="resultado">
+
+        <div class="resultadoHeader">
+
+            <h2>
+
+                Distribución de Mesas
+
+            </h2>
+
+            <div>
+
+                <button id="btnPDF">
+
+                    PDF
+
+                </button>
+
+                <button id="btnExcel">
+
+                    Excel
+
+                </button>
+
+                <button id="btnImprimir">
+
+                    Imprimir
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <div id="contenedorMesas">
+
+            <!-- JS -->
+
+        </div>
+
+    </section>
+
+    <!-- MODAL ESCUELA -->
+
+    <div class="modal oculto" id="modalEscuela">
+
+        <div class="modalContenido">
+
+            <h2>
+
+                Nueva Escuela
+
+            </h2>
+
+            <input
+                type="text"
+                id="nombreNuevaEscuela"
+                placeholder="Nombre de la escuela">
+
+            <div class="accionesModal">
+
+                <button id="guardarEscuela">
+
+                    Guardar
+
+                </button>
+
+                <button id="cerrarModalEscuela">
+
+                    Cancelar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL EGRESADO -->
+
+    <div class="modal oculto" id="modalEgresado">
+
+        <div class="modalContenido">
+
+            <h2>
+
+                Agregar Egresado
+
+            </h2>
+
+            <input
+                type="text"
+                id="nombreEgresado"
+                placeholder="Nombre">
+
+            <input
+                type="number"
+                id="cantidadInvitados"
+                placeholder="Invitados">
+
+            <textarea
+                id="observaciones"
+                placeholder="Observaciones"></textarea>
+
+            <div class="accionesModal">
+
+                <button id="guardarEgresado">
+
+                    Guardar
+
+                </button>
+
+                <button id="cerrarModalEgresado">
+
+                    Cancelar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="Lista.js"></script>
+
+</body>
+
+</html>

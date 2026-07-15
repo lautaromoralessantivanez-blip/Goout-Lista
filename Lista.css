@@ -1,0 +1,514 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#f4f6fb;
+    color:#222;
+}
+
+/* HEADER */
+
+header{
+    height:75px;
+    background:#1f2937;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 30px;
+    box-shadow:0 5px 15px rgba(0,0,0,.12);
+}
+
+.logo h1{
+    font-size:28px;
+    font-weight:700;
+}
+
+.logo span{
+    color:#29c36a;
+}
+
+.logo p{
+    font-size:13px;
+    opacity:.8;
+}
+
+.usuario{
+    background:#2f3d52;
+    padding:10px 18px;
+    border-radius:10px;
+}
+
+/* MAIN */
+
+main{
+    display:grid;
+    grid-template-columns:300px 1fr 320px;
+    gap:20px;
+    padding:20px;
+    height:calc(100vh - 75px);
+}
+
+/* PANEL */
+
+.sidebar,
+.contenido,
+.panelDerecho{
+    background:white;
+    border-radius:18px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    padding:20px;
+    overflow:auto;
+}
+
+.tituloPanel{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+button{
+    cursor:pointer;
+    border:none;
+    transition:.25s;
+}
+
+button:hover{
+    transform:translateY(-2px);
+}
+
+/* BOTONES */
+
+#btnNuevaEscuela,
+#btnAgregarEgresado,
+#btnGenerar,
+#btnPDF,
+#btnExcel,
+#btnImprimir,
+#guardarEscuela,
+#guardarEgresado{
+
+    background:#29c36a;
+    color:white;
+    padding:10px 18px;
+    border-radius:10px;
+    font-weight:600;
+}
+
+#btnNuevaEscuela{
+    width:40px;
+    height:40px;
+    font-size:24px;
+    padding:0;
+}
+
+#btnGenerar{
+    width:100%;
+    margin-top:20px;
+}
+
+/* INPUTS */
+
+input,
+textarea{
+    width:100%;
+    padding:12px;
+    margin-top:12px;
+    border:1px solid #d9d9d9;
+    border-radius:10px;
+    outline:none;
+    transition:.2s;
+}
+
+input:focus,
+textarea:focus{
+    border-color:#29c36a;
+}
+
+/* ESCUELAS */
+
+#listaEscuelas{
+    margin-top:20px;
+}
+
+.escuela{
+    padding:14px;
+    border-radius:12px;
+    margin-bottom:10px;
+    background:#f7f8fc;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.escuela:hover{
+    background:#29c36a;
+    color:white;
+}
+
+/* TABLA */
+
+.barraSuperior{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.busqueda{
+    margin-bottom:15px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+thead{
+    background:#1f2937;
+    color:white;
+}
+
+th,
+td{
+    padding:15px;
+    text-align:left;
+    border-bottom:1px solid #ececec;
+}
+
+tbody tr:hover{
+    background:#f4f4f4;
+}
+
+/* PANEL DERECHO */
+
+.config{
+    margin-top:20px;
+}
+
+.config label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+}
+
+.checks{
+    margin-top:20px;
+}
+
+.checks label{
+    display:block;
+    margin-bottom:15px;
+}
+
+.card{
+    background:#f8f9fd;
+    border-radius:15px;
+    padding:18px;
+    margin-top:15px;
+    text-align:center;
+}
+
+.card h3{
+    font-size:15px;
+    margin-bottom:10px;
+}
+
+.card span{
+    font-size:28px;
+    color:#29c36a;
+    font-weight:bold;
+}
+
+/* RESULTADO */
+
+.resultado{
+    margin:20px;
+    background:white;
+    border-radius:18px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    padding:20px;
+}
+
+.resultadoHeader{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+#contenedorMesas{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
+    gap:20px;
+}
+
+.mesa{
+    background:#f7f9fc;
+    border-radius:15px;
+    padding:18px;
+    border-left:8px solid #29c36a;
+}
+
+.mesa h3{
+    margin-bottom:15px;
+}
+
+.invitadoMesa{
+    padding:8px;
+    background:white;
+    border-radius:8px;
+    margin-bottom:8px;
+}
+
+/* MODAL */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+}
+
+.modalContenido{
+    background:white;
+    width:420px;
+    border-radius:18px;
+    padding:25px;
+    animation:aparece .25s;
+}
+
+@keyframes aparece{
+
+    from{
+        transform:scale(.8);
+        opacity:0;
+    }
+
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+
+}
+
+.accionesModal{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:20px;
+}
+
+.oculto{
+    display:none;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1200px){
+
+    main{
+
+        grid-template-columns:1fr;
+
+        height:auto;
+
+    }
+
+    .sidebar,
+    .panelDerecho{
+
+        min-height:350px;
+
+    }
+
+}
+
+@media(max-width:700px){
+
+    .barraSuperior,
+    .resultadoHeader{
+
+        flex-direction:column;
+        gap:15px;
+
+        align-items:flex-start;
+
+    }
+
+    table{
+
+        font-size:13px;
+
+    }
+
+}
+/* ===========================
+   TARJETAS DE EGRESADOS
+=========================== */
+
+.listaEgresados{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    margin-top:20px;
+}
+
+.egresadoCard{
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:20px;
+
+    border-left:6px solid #29c36a;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+    transition:.25s;
+}
+
+.egresadoCard:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
+
+}
+
+.egresadoHeader{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.egresadoNombre{
+
+    font-size:22px;
+
+    font-weight:700;
+
+}
+
+.egresadoInvitados{
+
+    margin-top:15px;
+
+    font-size:17px;
+
+    color:#29c36a;
+
+    font-weight:600;
+
+}
+
+.egresadoObs{
+
+    margin-top:15px;
+
+    color:#666;
+
+    line-height:1.6;
+}
+
+.botonesCard{
+
+    margin-top:20px;
+
+    display:flex;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+}
+
+.btnEditar{
+
+    background:#3b82f6;
+
+    color:white;
+
+    padding:10px 18px;
+
+    border-radius:10px;
+}
+
+.btnEliminar{
+
+    background:#ef4444;
+
+    color:white;
+
+    padding:10px 18px;
+
+    border-radius:10px;
+}
+
+.btnMesa{
+
+    background:#29c36a;
+
+    color:white;
+
+    padding:10px 18px;
+
+    border-radius:10px;
+}
+
+.sinDatos{
+
+    text-align:center;
+
+    padding:60px;
+
+    color:#999;
+
+    font-size:20px;
+
+    border:3px dashed #ddd;
+
+    border-radius:20px;
+
+    background:white;
+}
+.listaInvitados{
+
+    margin-top:20px;
+
+}
+
+.itemInvitado{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin-bottom:10px;
+
+}
+
+.itemInvitado input{
+
+    flex:1;
+
+}
+
+.itemInvitado button{
+
+    width:45px;
+
+}
