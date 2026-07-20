@@ -137,12 +137,33 @@ textarea:focus{
 }
 
 .escuela{
-    padding:14px;
-    border-radius:12px;
-    margin-bottom:10px;
-    background:#f7f8fc;
-    cursor:pointer;
+
+    background:white;
+
+    border:1px solid #ececec;
+
+    border-radius:16px;
+
+    padding:18px;
+
+    margin-bottom:14px;
+
     transition:.25s;
+
+    cursor:pointer;
+
+    box-shadow:0 4px 12px rgba(0,0,0,.04);
+
+}
+
+.escuela:hover{
+
+    transform:translateY(-3px);
+
+    border-color:#29c36a;
+
+    background:#f8fffb;
+
 }
 
 .escuela:hover{
@@ -238,7 +259,9 @@ tbody tr:hover{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:20px;
+    padding-bottom:20px;
+    border-bottom:1px solid #ececec;
+    margin-bottom:30px;
 }
 
 #contenedorMesas{
@@ -248,21 +271,59 @@ tbody tr:hover{
 }
 
 .mesa{
-    background:#f7f9fc;
-    border-radius:15px;
-    padding:18px;
-    border-left:8px solid #29c36a;
+
+    background:white;
+
+    border-radius:18px;
+
+    border:1px solid #ececec;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.06);
+
+    overflow:hidden;
+
+    transition:.25s;
+
+}
+
+.mesa:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 15px 35px rgba(0,0,0,.10);
+
 }
 
 .mesa h3{
-    margin-bottom:15px;
+
+    background:#29c36a;
+
+    color:white;
+
+    padding:18px;
+
+    text-align:center;
+
+    font-size:22px;
+
+    margin:0;
+
 }
 
 .invitadoMesa{
-    padding:8px;
-    background:white;
-    border-radius:8px;
-    margin-bottom:8px;
+
+    padding:14px 18px;
+
+    border-bottom:1px solid #f0f0f0;
+
+    font-size:16px;
+
+}
+
+.invitadoMesa:last-child{
+
+    border-bottom:none;
+
 }
 
 /* MODAL */
@@ -363,17 +424,26 @@ tbody tr:hover{
 
 .egresadoCard{
 
-    background:white;
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:25px;
+
+    background:#fff;
+
+    padding:22px;
+
+    border:1px solid #ececec;
 
     border-radius:18px;
 
-    padding:20px;
-
-    border-left:6px solid #29c36a;
-
-    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    box-shadow:0 6px 18px rgba(0,0,0,.05);
 
     transition:.25s;
+
 }
 
 .egresadoCard:hover{
@@ -388,17 +458,19 @@ tbody tr:hover{
 
     display:flex;
 
-    justify-content:space-between;
+    flex-direction:column;
 
-    align-items:center;
+    gap:6px;
 
 }
 
-.egresadoNombre{
+.egresadoInvitados{
 
-    font-size:22px;
+    color:#666;
 
-    font-weight:700;
+    font-size:16px;
+
+    margin-top:5px;
 
 }
 
@@ -416,55 +488,77 @@ tbody tr:hover{
 
 .egresadoObs{
 
-    margin-top:15px;
+    flex:1;
 
-    color:#666;
+    text-align:center;
 
-    line-height:1.6;
+    color:#777;
+
+    font-size:15px;
+
 }
 
 .botonesCard{
 
-    margin-top:20px;
-
     display:flex;
 
-    gap:12px;
+    gap:10px;
 
-    flex-wrap:wrap;
+    align-items:center;
+
 }
 
 .btnEditar{
 
-    background:#3b82f6;
+    width:46px;
 
-    color:white;
+    height:46px;
 
-    padding:10px 18px;
+    padding:0;
 
-    border-radius:10px;
+    border-radius:12px;
+
+    background:white;
+
+    color:#2563eb;
+
+    border:1px solid #ddd;
+
 }
 
 .btnEliminar{
 
-    background:#ef4444;
+    width:46px;
 
-    color:white;
+    height:46px;
 
-    padding:10px 18px;
+    padding:0;
 
-    border-radius:10px;
+    border-radius:12px;
+
+    background:white;
+
+    color:#ef4444;
+
+    border:1px solid #ddd;
+
 }
-
 .btnMesa{
 
-    background:#29c36a;
+    width:46px;
 
-    color:white;
+    height:46px;
 
-    padding:10px 18px;
+    padding:0;
 
-    border-radius:10px;
+    border-radius:12px;
+
+    background:white;
+
+    color:#22c55e;
+
+    border:1px solid #ddd;
+
 }
 
 .sinDatos{
@@ -510,5 +604,170 @@ tbody tr:hover{
 .itemInvitado button{
 
     width:45px;
+
+}
+.resultadoHeader div{
+    display:flex;
+    gap:12px;
+    align-items:center;
+}
+/* BOTONES RESULTADO */
+
+.resultadoHeader div{
+
+    display:flex;
+
+    gap:16px;
+
+}
+
+.resultadoHeader button{
+
+    min-width:190px;
+
+    height:54px;
+
+    border-radius:14px;
+
+    font-size:17px;
+
+    font-weight:600;
+
+    background:#29c36a;
+
+    color:white;
+
+    box-shadow:0 8px 18px rgba(41,195,106,.25);
+
+}
+
+.resultadoHeader button:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 12px 25px rgba(41,195,106,.35);
+
+}
+.resultado h2{
+
+    font-size:38px;
+
+    font-weight:700;
+
+    color:#222;
+
+}
+.busqueda input{
+
+    height:58px;
+
+    border-radius:16px;
+
+    border:1px solid #ddd;
+
+    padding-left:18px;
+
+    font-size:16px;
+
+    box-shadow:0 4px 10px rgba(0,0,0,.04);
+
+}
+
+.busqueda input:focus{
+
+    border-color:#29c36a;
+
+    box-shadow:0 0 0 4px rgba(41,195,106,.15);
+
+}
+.separadorPanel{
+
+    margin:30px 0;
+
+    border:none;
+
+    border-top:1px solid #ececec;
+
+}
+
+.panelDerecho h2{
+
+    font-size:28px;
+
+    margin-bottom:25px;
+
+    color:#1f2937;
+
+}
+
+.panelDerecho input[type="number"]{
+
+    height:55px;
+
+    font-size:22px;
+
+    text-align:center;
+
+    font-weight:700;
+
+}
+
+.card{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:18px 20px;
+
+    border-radius:16px;
+
+    margin-top:14px;
+
+    background:#fafafa;
+
+    border:1px solid #ececec;
+
+}
+
+.card h3{
+
+    font-size:17px;
+
+    margin:0;
+
+}
+
+.card span{
+
+    font-size:26px;
+
+}
+.mesaActiva{
+
+    border:3px dashed #29c36a;
+
+    background:#eefdf4;
+
+    transform:scale(1.02);
+
+    transition:.2s;
+
+}
+.tituloGrupo{
+
+    background:#f4f6fb;
+
+    border-left:5px solid #29c36a;
+
+    padding:10px 15px;
+
+    font-weight:700;
+
+    color:#1f2937;
+
+    margin-top:10px;
 
 }
