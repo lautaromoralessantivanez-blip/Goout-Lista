@@ -7,7 +7,27 @@
 // BASE DE DATOS LOCAL
 // ---------------------------
 
-let escuelas = JSON.parse(localStorage.getItem("goout_escuelas")) || [];
+import {
+
+    db,
+
+    collection,
+
+    addDoc,
+
+    updateDoc,
+
+    deleteDoc,
+
+    doc,
+
+    onSnapshot,
+
+    getDocs
+
+} from "./firebase.js";
+
+let escuelas = [];
 
 let escuelaSeleccionada = null;
 
@@ -72,15 +92,46 @@ const lugaresLibres = document.getElementById("lugaresLibres");
 // GUARDAR
 // ==========================================
 
-function guardarTodo(){
+async function guardarTodo(){
 
-    localStorage.setItem(
+    if(!escuelaSeleccionada) return;
 
-        "goout_escuelas",
+    try{
 
-        JSON.stringify(escuelas)
+        await updateDoc(
 
-    );
+            doc(db,"escuelas",escuelaSeleccionada.id),
+
+{
+
+    nombre: escuelaSeleccionada.nombre,
+
+    egresados: escuelaSeleccionada.egresados,
+
+    distribucionMesas: distribucionGuardada
+
+}
+        );
+
+    }catch(error){
+
+    console.error(error);
+
+    alert(error.message);
+
+}
+
+}
+
+function prepararDistribucionParaGuardar(){
+
+    return mesas.map((mesa,index)=>({
+
+        numero:index,
+
+        grupos:mesa
+
+    }));
 
 }
 // ==========================================
@@ -161,11 +212,33 @@ function crearEgresado(){
 
     }
 
-    if(egresadoEditando){
+if(egresadoEditando){
 
     egresadoEditando.nombre = nombre;
-
     egresadoEditando.observaciones = obs;
+
+    const cantidadActual = egresadoEditando.invitados.length;
+
+    if(invitados > cantidadActual){
+
+        for(let i = cantidadActual; i < invitados; i++){
+
+            egresadoEditando.invitados.push({
+
+                id: Date.now() + i,
+                nombre: ""
+
+            });
+
+        }
+
+    }
+
+    if(invitados < cantidadActual){
+
+        egresadoEditando.invitados.splice(invitados);
+
+    }
 
 }else{
 
@@ -212,31 +285,99 @@ cerrarEgresado();
 // CREAR ESCUELA
 // ==========================================
 
-function crearEscuela(){
+async function crearEscuela(){
 
     const nombre = nombreNuevaEscuela.value.trim();
 
     if(nombre==="") return;
 
-    const nuevaEscuela = {
+    await addDoc(
 
-        id: Date.now(),
+        collection(db,"escuelas"),
 
-        nombre,
+        {
 
-        egresados:[]
+            nombre: nombre,
 
-    };
+            egresados: []
 
-    escuelas.push(nuevaEscuela);
+        }
 
-    guardarTodo();
-
-    mostrarEscuelas();
-
-    seleccionarEscuela(nuevaEscuela.id);
+    );
 
     cerrarEscuela();
+
+}
+async function eliminarEscuela(id){
+
+    const escuela = escuelas.find(e=>e.id===id);
+
+    if(!escuela) return;
+
+    if(!confirm(`¿Eliminar "${escuela.nombre}"?`)) return;
+
+    try{
+
+        await deleteDoc(
+
+            doc(db,"escuelas",id)
+
+        );
+
+        if(escuelaSeleccionada?.id===id){
+
+            escuelaSeleccionada=null;
+
+        }
+
+    }catch(error){
+
+        console.error(error);
+
+        alert("No se pudo eliminar.");
+
+    }
+
+}
+async function editarEscuela(id){
+
+    const escuela = escuelas.find(e=>e.id===id);
+
+    if(!escuela) return;
+
+    const nuevoNombre = prompt(
+
+        "Nuevo nombre de la escuela:",
+
+        escuela.nombre
+
+    );
+
+    if(nuevoNombre === null) return;
+
+    if(nuevoNombre.trim() === "") return;
+
+    try{
+
+        await updateDoc(
+
+            doc(db,"escuelas",id),
+
+            {
+
+                nombre: nuevoNombre.trim()
+
+            }
+
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        alert("No se pudo actualizar.");
+
+    }
 
 }
 // ==========================================
@@ -259,14 +400,45 @@ function mostrarEscuelas(){
 
         div.className="escuela";
 
-        div.innerHTML=`
+div.innerHTML=`
 
-            <strong>${escuela.nombre}</strong><br>
+<div style="display:flex;justify-content:space-between;align-items:center;">
 
-            ${escuela.egresados.length} egresados
+    <div>
 
-        `;
+        <strong>${escuela.nombre}</strong><br>
 
+        ${escuela.egresados.length} egresados
+
+    </div>
+
+    <div style="display:flex;gap:8px;">
+
+        <button
+
+            class="btnEditar"
+
+            onclick="event.stopPropagation();editarEscuela('${escuela.id}')">
+
+            ✏️
+
+        </button>
+
+        <button
+
+            class="btnEliminar"
+
+            onclick="event.stopPropagation();eliminarEscuela('${escuela.id}')">
+
+            🗑️
+
+        </button>
+
+    </div>
+
+</div>
+
+`;
         div.onclick=()=>{
 
             seleccionarEscuela(escuela.id);
@@ -284,15 +456,28 @@ function mostrarEscuelas(){
 
 function seleccionarEscuela(id){
 
-    escuelaSeleccionada=
-
+    escuelaSeleccionada =
         escuelas.find(e=>e.id===id);
 
-    nombreEscuela.textContent=
-
+    nombreEscuela.textContent =
         escuelaSeleccionada.nombre;
 
     actualizarVista();
+
+    if(
+        escuelaSeleccionada.distribucionMesas &&
+        escuelaSeleccionada.distribucionMesas.length > 0
+    ){
+
+        mesas = JSON.parse(
+            JSON.stringify(
+                escuelaSeleccionada.distribucionMesas
+            )
+        );
+
+        mostrarMesas();
+
+    }
 
 }
 // ==========================================
@@ -389,39 +574,42 @@ function mostrarEgresados(){
 <div class="botonesCard">
 
     <button
-        class="btnMesa"
-        onclick="toggleInvitados(${egresado.id})">
-
-        ${egresado.mostrarInvitados ? "▲ Ocultar invitados" : "▼ Ver invitados"}
-
-    </button>
-
-    <button
         class="btnEditar"
+        title="Editar"
         onclick="editarEgresado(${egresado.id})">
 
-        Editar
-
-    </button>
-
-    <button
-        class="btnMesa"
-        onclick="agregarInvitado(${egresado.id})">
-
-        ➕ Agregar invitado
+        ✏️
 
     </button>
 
     <button
         class="btnEliminar"
+        title="Eliminar"
         onclick="eliminarEgresado(${egresado.id})">
 
-        Eliminar
+        🗑️
+
+    </button>
+
+    <button
+        class="btnMesa"
+        title="Agregar invitados"
+        onclick="agregarInvitado(${egresado.id})">
+
+        ➕
+
+    </button>
+
+    <button
+        class="btnMesa"
+        title="Mostrar invitados"
+        onclick="toggleInvitados(${egresado.id})">
+
+        ${egresado.mostrarInvitados ? "▲" : "▼"}
 
     </button>
 
 </div>
-
 <div class="listaInvitados">
 
     ${
@@ -590,13 +778,55 @@ function atualizarMesa(){
 
 }
 let mesas = [];
+
+let distribucionGuardada = [];
+
+let invitadoArrastrando = null;
 // ==========================================
 // INICIO
 // ==========================================
 
-mostrarEscuelas();
+onSnapshot(
 
-actualizarVista();
+    collection(db,"escuelas"),
+
+    (snapshot)=>{
+
+        escuelas=[];
+
+        snapshot.forEach(docu=>{
+
+         escuelas.push({
+
+    id:docu.id,
+
+    distribucionMesas: [],
+
+    ...docu.data()
+
+});
+
+        });
+
+        mostrarEscuelas();
+
+        if(escuelaSeleccionada){
+
+            const encontrada = escuelas.find(
+
+                e=>e.id===escuelaSeleccionada.id
+
+            );
+
+            escuelaSeleccionada = encontrada || null;
+
+        }
+
+        actualizarVista();
+
+    }
+
+);
 function toggleInvitados(id){
 
     const egresado = escuelaSeleccionada.egresados.find(
@@ -616,18 +846,34 @@ function toggleInvitados(id){
 function agregarInvitado(id){
 
     const egresado = escuelaSeleccionada.egresados.find(
+        e => e.id === id
+    );
 
-        e=>e.id===id
+    if(!egresado) return;
+
+    const cantidad = parseInt(
+
+        prompt("¿Cuántos invitados querés agregar?")
 
     );
 
-    egresado.invitados.push({
+    if(isNaN(cantidad) || cantidad <= 0){
 
-        id:Date.now(),
+        return;
 
-        nombre:""
+    }
 
-    });
+    for(let i=0;i<cantidad;i++){
+
+        egresado.invitados.push({
+
+            id: Date.now()+i,
+
+            nombre:""
+
+        });
+
+    }
 
     guardarTodo();
 
@@ -666,8 +912,6 @@ function eliminarInvitado(id,index){
 }
 function generarMesas(){
 
-    mesas=[];
-
     if(!escuelaSeleccionada){
 
         alert("Seleccioná una escuela.");
@@ -676,63 +920,110 @@ function generarMesas(){
 
     }
 
+    if(
+
+        escuelaSeleccionada.distribucionMesas &&
+
+        escuelaSeleccionada.distribucionMesas.length > 0
+
+    ){
+
+mesas = escuelaSeleccionada.distribucionMesas.map(
+
+    mesa => mesa.grupos
+
+);
+
+        mostrarMesas();
+
+        actualizarEstadisticas();
+
+        return;
+
+    }
+
+    mesas = [];
+
     const capacidad = parseInt(
-
         document.getElementById("personasMesa").value
-
     );
 
-    const grupos=[
-
-        ...escuelaSeleccionada.egresados
-
-    ];
+    const grupos = [...escuelaSeleccionada.egresados];
 
     grupos.sort(
-
         (a,b)=>b.invitados.length-a.invitados.length
-
     );
 
     grupos.forEach(grupo=>{
 
-        let agregado=false;
+        let invitadosPendientes=[...grupo.invitados];
 
-        for(const mesa of mesas){
+        while(invitadosPendientes.length){
 
-            const ocupados=mesa.reduce(
+            let mejorMesa=null;
 
-                (t,g)=>t+g.invitados.length,
+            let mejorEspacio=-1;
 
-                0
+            mesas.forEach(mesa=>{
 
-            );
+                const ocupados = mesa.reduce(
 
-            if(
+                    (t,g)=>t+g.invitados.length,
 
-                ocupados+grupo.invitados.length<=capacidad
+                    0
 
-            ){
+                );
 
-                mesa.push(grupo);
+                const libres = capacidad-ocupados;
 
-                agregado=true;
+                if(
 
-                break;
+                    libres>mejorEspacio &&
+                    libres>=1
+
+                ){
+
+                    mejorMesa=mesa;
+
+                    mejorEspacio=libres;
+
+                }
+
+            });
+
+            if(!mejorMesa){
+
+                mejorMesa=[];
+
+                mesas.push(mejorMesa);
+
+                mejorEspacio=capacidad;
 
             }
 
-        }
+            const cantidad = Math.min(
 
-        if(!agregado){
+                mejorEspacio,
 
-            mesas.push([grupo]);
+                invitadosPendientes.length
+
+            );
+
+            mejorMesa.push({
+
+                nombre: grupo.nombre,
+
+                invitados: invitadosPendientes.splice(0,cantidad)
+
+            });
 
         }
 
     });
 
     mostrarMesas();
+
+    actualizarEstadisticas();
 
 }
 function mostrarMesas(){
@@ -745,45 +1036,237 @@ function mostrarMesas(){
 
     mesas.forEach((mesa,index)=>{
 
-        const card=document.createElement("div");
+const card = document.createElement("div");
 
-        card.className="mesa";
+card.className = "mesa";
+
+card.dataset.mesa = index;
+
+card.addEventListener("dragover",(e)=>{
+
+    e.preventDefault();
+
+    card.classList.add("mesaActiva");
+
+});
+
+card.addEventListener("dragleave",()=>{
+
+    card.classList.remove("mesaActiva");
+
+});
+
+card.addEventListener("drop",(e)=>{
+
+    e.preventDefault();
+
+    card.classList.remove("mesaActiva");
+
+    const datos = JSON.parse(
+
+        e.dataTransfer.getData("text/plain")
+
+    );
+
+    if(datos.mesa == index){
+
+        alert("El invitado ya está en esta mesa.");
+
+        return;
+
+    }
+
+    const confirmar = confirm(
+
+        `¿Mover este invitado a la Mesa ${index+1}?`
+
+    );
+
+    if(!confirmar) return;
+
+const grupoOrigen = mesas[datos.mesa].find(
+
+    g => g.nombre === datos.grupo
+
+);
+
+if(!grupoOrigen) return;
+
+const invitado = grupoOrigen.invitados.splice(
+
+    datos.invitado,
+
+    1
+
+)[0];
+
+if(!invitado) return;
+
+// Si el grupo quedó vacío, lo eliminamos de la mesa
+if(grupoOrigen.invitados.length === 0){
+
+    mesas[datos.mesa] = mesas[datos.mesa].filter(
+
+        g => g !== grupoOrigen
+
+    );
+
+}
+
+const capacidad = parseInt(
+
+    document.getElementById("personasMesa").value
+
+);
+
+const ocupados = mesas[index].reduce(
+
+    (total, grupo) => total + grupo.invitados.length,
+
+    0
+
+);
+
+if(ocupados >= capacidad){
+
+    alert("Esta mesa ya está completa.");
+
+    grupoOrigen.invitados.push(invitado);
+
+    mostrarMesas();
+
+    return;
+
+}
+
+// Buscar si el grupo ya existe en la mesa destino
+let grupoDestino = mesas[index].find(
+
+    g => g.nombre === datos.grupo
+
+);
+
+// Si no existe, lo creamos
+if(!grupoDestino){
+
+    grupoDestino = {
+
+        nombre: datos.grupo,
+
+        invitados: []
+
+    };
+
+    mesas[index].push(grupoDestino);
+
+}
+
+// Agregamos el invitado al grupo destino
+grupoDestino.invitados.push(invitado);
+
+// Eliminar mesas vacías
+mesas = mesas.filter(
+
+    mesa => mesa.length > 0
+
+);
+
+// Guardar la distribución actual
+distribucionGuardada = prepararDistribucionParaGuardar();
+
+escuelaSeleccionada.distribucionMesas = distribucionGuardada;
+
+guardarTodo();
+
+// Redibujar
+mostrarMesas();
+
+});
 
         let html=`
 
         <h3>
 
-        Mesa ${index+1}
+🪑 Mesa ${index+1}
 
-        </h3>
+</h3>
+<p style="padding:15px;font-weight:600;color:#666;">
+
+${mesa.reduce((t,g)=>t+g.invitados.length,0)} invitados
+<br>
+${parseInt(document.getElementById("personasMesa").value)-mesa.reduce((t,g)=>t+g.invitados.length,0)} lugares libres
+
+</p>
 
         `;
 
         mesa.forEach(grupo=>{
 
-            grupo.invitados.forEach(invitado=>{
+grupo.invitados.forEach((invitado, indice)=>{
 
-                html+=`
+    html += `
 
-                <div class="invitadoMesa">
+  <div
+    class="invitadoMesa"
+    draggable="true"
+    data-mesa="${index}"
+    data-grupo="${grupo.nombre}"
+    data-invitado="${indice}">
 
-                    ${invitado.nombre || "Sin nombre"}
+    ${invitado.nombre || "Sin nombre"}
 
-                </div>
+</div>
 
-                `;
+    `;
 
-            });
+});
 
         });
 
         card.innerHTML=html;
 
-        contenedor.appendChild(card);
+   contenedor.appendChild(card);
+
+});
+
+activarDrag();
+
+}
+
+function activarDrag(){
+
+    const invitados = document.querySelectorAll(".invitadoMesa");
+
+    invitados.forEach(invitado=>{
+
+        invitado.addEventListener("dragstart",(e)=>{
+
+      const datos = {
+
+    mesa: Number(invitado.dataset.mesa),
+
+    grupo: invitado.dataset.grupo,
+
+    invitado: Number(invitado.dataset.invitado)
+
+};
+
+invitadoArrastrando = datos;
+
+e.dataTransfer.setData(
+
+    "text/plain",
+
+    JSON.stringify(datos)
+
+);
+
+        });
 
     });
 
 }
+
 function generarPDF(){
 
     if(mesas.length === 0){
@@ -851,3 +1334,18 @@ function generarPDF(){
     doc.save("GOOUT Lista.pdf");
 
 }
+window.editarEgresado = editarEgresado;
+
+window.eliminarEgresado = eliminarEgresado;
+
+window.agregarInvitado = agregarInvitado;
+
+window.toggleInvitados = toggleInvitados;
+
+window.guardarNombreInvitado = guardarNombreInvitado;
+
+window.eliminarInvitado = eliminarInvitado;
+
+window.eliminarEscuela = eliminarEscuela;
+
+window.editarEscuela = editarEscuela;
